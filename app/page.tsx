@@ -434,6 +434,15 @@ export default function LandingPage() {
             </span>
           </div>
           <div className="flex items-center gap-3">
+            <Link href="/pricing">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Pricing
+              </Button>
+            </Link>
             <Link href="/login">
               <Button
                 variant="ghost"
@@ -909,7 +918,7 @@ export default function LandingPage() {
               Get the expertise, accountability, and support that the world&apos;s most successful
               people have always had.
             </motion.p>
-            <motion.div variants={fadeUp} custom={3}>
+            <motion.div variants={fadeUp} custom={3} className="flex flex-wrap items-center gap-4 justify-center">
               <Link href="/signup">
                 <Button
                   size="lg"
@@ -917,6 +926,15 @@ export default function LandingPage() {
                 >
                   Get Started Free
                   <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+              <Link href="/pricing">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-base px-8 h-13 border-border hover:border-ember/20 hover:bg-ember/[0.03] text-foreground rounded-xl"
+                >
+                  See Pricing
                 </Button>
               </Link>
             </motion.div>
@@ -960,6 +978,9 @@ export default function LandingPage() {
             </span>
           </div>
           <div className="flex items-center gap-4">
+            <Link href="/pricing" className="text-xs text-muted-foreground/60 hover:text-ember transition-colors">
+              Pricing
+            </Link>
             <Link href="/disclaimer" className="text-xs text-muted-foreground/60 hover:text-ember transition-colors">
               AI Disclosure
             </Link>

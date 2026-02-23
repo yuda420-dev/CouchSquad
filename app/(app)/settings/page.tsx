@@ -4,11 +4,14 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Settings, User, Bell, Shield, Zap, Sun, Moon, Monitor, Download, Sparkles, Loader2, Check } from "lucide-react";
+import { Settings, User, Bell, Shield, Zap, Sun, Moon, Monitor, Download, Sparkles, Loader2, Check, CreditCard, Crown, ExternalLink } from "lucide-react";
 import { useTheme } from "@/lib/hooks/use-theme";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useAppStore } from "@/lib/stores/app-store";
+import { useSubscription } from "@/lib/hooks/use-subscription";
+import { getPlanByTier } from "@/lib/stripe/config";
+import Link from "next/link";
 
 export default function SettingsPage() {
   const profile = useAppStore((s) => s.profile);
@@ -20,6 +23,8 @@ export default function SettingsPage() {
   const [demoLoaded, setDemoLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const { subscription, tier, loading: subLoading, isPro, isFree } = useSubscription();
+  const [portalLoading, setPortalLoading] = useState(false);
 
   // Load profile data on mount
   useEffect(() => {
@@ -124,6 +129,101 @@ export default function SettingsPage() {
               </>
             )}
           </Button>
+        </div>
+      </section>
+
+      <Separator className="mb-8" />
+
+      {/* Billing & Subscription */}
+      <section className="mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <CreditCard className="w-5 h-5 text-ember" />
+          <h2 className="text-lg font-semibold">Billing & Subscription</h2>
+        </div>
+        <div className="bg-card rounded-xl border border-border/50 p-5 space-y-4">
+          {subLoading ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Loading subscription...
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">Current Plan</p>
+                    {!isFree && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ember/10 text-ember">
+                        <Crown className="w-3 h-3" />
+                        {getPlanByTier(tier).name}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {isFree
+                      ? "Free Starter plan — 2 coaches, 15 messages/day"
+                      : `$${getPlanByTier(tier).price}/month — ${getPlanByTier(tier).description}`}
+                  </p>
+                  {subscription?.cancel_at_period_end && subscription.current_period_end && (
+                    <p className="text-xs text-amber-600 mt-1">
+                      Cancels at end of period ({new Date(subscription.current_period_end).toLocaleDateString()})
+                    </p>
+                  )}
+                  {subscription?.status === "past_due" && (
+                    <p className="text-xs text-red-500 mt-1 font-medium">
+                      Payment past due — please update your payment method
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {isFree ? (
+                  <Link href="/pricing">
+                    <Button size="sm" className="bg-ember hover:bg-ember/90 text-white">
+                      <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                      Upgrade Plan
+                    </Button>
+                  </Link>
+                ) : (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={portalLoading}
+                      onClick={async () => {
+                        setPortalLoading(true);
+                        try {
+                          const res = await fetch("/api/stripe/portal", { method: "POST" });
+                          const data = await res.json();
+                          if (data.url) {
+                            window.location.href = data.url;
+                          } else {
+                            toast.error("Could not open billing portal");
+                          }
+                        } catch {
+                          toast.error("Something went wrong");
+                        } finally {
+                          setPortalLoading(false);
+                        }
+                      }}
+                    >
+                      {portalLoading ? (
+                        <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                      ) : (
+                        <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+                      )}
+                      Manage Billing
+                    </Button>
+                    <Link href="/pricing">
+                      <Button size="sm" variant="ghost" className="text-muted-foreground">
+                        Change Plan
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </section>
 

@@ -219,6 +219,20 @@ export interface ActivityLogRow {
   created_at: string;
 }
 
+export interface Subscription {
+  id: string;
+  user_id: string;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  plan_tier: "free" | "pro" | "elite";
+  status: "active" | "canceled" | "past_due" | "trialing";
+  current_period_start: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -238,6 +252,7 @@ export interface Database {
       mood_entries: { Row: MoodEntry; Insert: Omit<MoodEntry, "id" | "created_at">; Update: Partial<MoodEntry> };
       bookmarks: { Row: Bookmark; Insert: Omit<Bookmark, "id" | "created_at">; Update: Partial<Bookmark> };
       activity_logs: { Row: ActivityLogRow; Insert: Omit<ActivityLogRow, "id" | "created_at">; Update: Partial<ActivityLogRow> };
+      subscriptions: { Row: Subscription; Insert: Omit<Subscription, "id" | "created_at" | "updated_at">; Update: Partial<Subscription> };
     };
   };
 }
