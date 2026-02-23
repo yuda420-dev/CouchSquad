@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Conversation, Message } from "./types";
+import { encrypt, tryDecrypt, isEncryptionEnabled } from "@/lib/crypto/encryption";
 
 // Use generic client to avoid strict Database Insert type issues
 // (our types.ts Insert definitions resolve to `never` with @supabase/ssr)
@@ -57,12 +58,14 @@ export async function getOrCreateConversation(
 
 /**
  * Load messages for a conversation, ordered chronologically.
+ * Automatically decrypts encrypted messages.
  * Returns the most recent `limit` messages.
  */
 export async function loadMessages(
   supabase: Client,
   conversationId: string,
-  limit = 100
+  limit = 100,
+  userId?: string
 ): Promise<Message[]> {
   const { data, error } = await supabase
     .from("messages")
@@ -76,7 +79,17 @@ export async function loadMessages(
     return [];
   }
 
-  return (data || []) as Message[];
+  const messages = (data || []) as (Message & { encrypted?: boolean })[];
+
+  // Decrypt encrypted messages
+  if (userId) {
+    return messages.map((m) => ({
+      ...m,
+      content: m.encrypted ? tryDecrypt(m.content, userId) : m.content,
+    }));
+  }
+
+  return messages;
 }
 
 /**
@@ -87,15 +100,20 @@ export async function saveMessage(
   conversationId: string,
   role: "user" | "assistant" | "system",
   content: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
+  userId?: string
 ): Promise<Message | null> {
+  const shouldEncrypt = isEncryptionEnabled() && !!userId;
+  const storedContent = shouldEncrypt ? encrypt(content, userId!) : content;
+
   const { data, error } = await supabase
     .from("messages")
     .insert({
       conversation_id: conversationId,
       role,
-      content,
+      content: storedContent,
       metadata: metadata || null,
+      encrypted: shouldEncrypt,
     })
     .select()
     .single();
@@ -125,23 +143,29 @@ export async function saveMessagePair(
   conversationId: string,
   userContent: string,
   assistantContent: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
+  userId?: string
 ): Promise<void> {
   const now = new Date().toISOString();
+  const shouldEncrypt = isEncryptionEnabled() && !!userId;
+  const storedUser = shouldEncrypt ? encrypt(userContent, userId!) : userContent;
+  const storedAssistant = shouldEncrypt ? encrypt(assistantContent, userId!) : assistantContent;
 
   const { error } = await supabase.from("messages").insert([
     {
       conversation_id: conversationId,
       role: "user",
-      content: userContent,
+      content: storedUser,
       metadata: null,
+      encrypted: shouldEncrypt,
       created_at: now,
     },
     {
       conversation_id: conversationId,
       role: "assistant",
-      content: assistantContent,
+      content: storedAssistant,
       metadata: metadata || null,
+      encrypted: shouldEncrypt,
       created_at: new Date(Date.now() + 1).toISOString(), // +1ms to ensure ordering
     },
   ]);

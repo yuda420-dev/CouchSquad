@@ -766,8 +766,8 @@ export default function LandingPage() {
                 {
                   icon: Shield,
                   num: "06",
-                  title: "Private & Secure",
-                  desc: "Your conversations and personal data stay yours. No sharing, no training on your data. Ever.",
+                  title: "Encrypted & Private",
+                  desc: "Your conversations are encrypted at rest with AES-256. Even our team can't read your chats. Anonymous analytics only.",
                   accent: "#264653",
                   emoji: "🔒",
                 },

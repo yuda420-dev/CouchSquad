@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CoachMemory } from "@/lib/supabase/types";
+import { encrypt, tryDecrypt, isEncryptionEnabled } from "@/lib/crypto/encryption";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Client = SupabaseClient<any>;
@@ -93,12 +94,15 @@ export async function saveFacts(
   // Load existing facts to avoid duplicates
   const { data: existing } = await supabase
     .from("coach_memory")
-    .select("fact")
+    .select("fact, encrypted")
     .eq("user_id", userId)
     .eq("coach_id", coachId);
 
   const existingFacts = new Set(
-    (existing || []).map((e: { fact: string }) => e.fact.toLowerCase())
+    (existing || []).map((e: { fact: string; encrypted?: boolean }) => {
+      const plainFact = e.encrypted ? tryDecrypt(e.fact, userId) : e.fact;
+      return plainFact.toLowerCase();
+    })
   );
 
   // Filter out facts that are too similar to existing ones
@@ -108,14 +112,16 @@ export async function saveFacts(
 
   if (!newFacts.length) return;
 
+  const shouldEncrypt = isEncryptionEnabled();
   const { error } = await supabase.from("coach_memory").insert(
     newFacts.map((f) => ({
       user_id: userId,
       coach_id: coachId,
-      fact: f.fact,
+      fact: shouldEncrypt ? encrypt(f.fact, userId) : f.fact,
       category: f.category,
       importance: f.importance,
       source: "conversation" as const,
+      encrypted: shouldEncrypt,
     }))
   );
 
@@ -147,7 +153,13 @@ export async function loadMemories(
     return [];
   }
 
-  return (data || []) as CoachMemory[];
+  const memories = (data || []) as (CoachMemory & { encrypted?: boolean })[];
+
+  // Decrypt encrypted memories
+  return memories.map((m) => ({
+    ...m,
+    fact: m.encrypted ? tryDecrypt(m.fact, userId) : m.fact,
+  }));
 }
 
 /**

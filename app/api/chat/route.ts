@@ -6,6 +6,7 @@ import { buildCoachPrompt } from "@/lib/ai/prompt-builder";
 import { streamChat, type ChatMessage } from "@/lib/ai/providers";
 import { saveMessagePair } from "@/lib/supabase/conversations";
 import { loadMemories, processConversationMemory } from "@/lib/ai/memory";
+import { trackMessageSent } from "@/lib/analytics/track";
 import type { Coach, PersonalityTraits } from "@/lib/supabase/types";
 
 /** Helper to create Supabase client for API routes */
@@ -184,16 +185,19 @@ async function postStreamProcessing(
   try {
     const supabase = await getSupabase();
 
-    // 1. Persist messages
+    // 1. Persist messages (encrypted at rest)
     if (conversationId) {
       await saveMessagePair(supabase, conversationId, userMessage, assistantMessage, {
         coach_id: coach.id,
         ai_provider: coach.ai_provider,
         ai_model: coach.ai_model,
-      });
+      }, userId || undefined);
     }
 
-    // 2. Extract and store memory facts
+    // 2. Track anonymous analytics (no user_id, no content)
+    trackMessageSent(coach.id, coach.domain);
+
+    // 3. Extract and store memory facts
     if (userId) {
       await processConversationMemory(
         supabase,

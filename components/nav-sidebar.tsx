@@ -24,6 +24,7 @@ import {
   Flame,
   Home,
   GitBranch,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/lib/stores/app-store";
@@ -45,6 +46,7 @@ const navItems = [
   { href: "/weekly-review", icon: CalendarDays, label: "Review" },
   { href: "/timeline", icon: GitBranch, label: "Timeline" },
   { href: "/achievements", icon: Trophy, label: "Achievements" },
+  { href: "/privacy", icon: Shield, label: "Privacy" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 

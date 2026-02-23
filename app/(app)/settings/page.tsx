@@ -349,11 +349,15 @@ export default function SettingsPage() {
         </div>
         <div className="bg-card rounded-xl border border-border/50 p-5 space-y-4">
           <p className="text-sm text-muted-foreground">
-            Your conversations and personal data are stored securely and never shared.
-            AI coaches do not train on your data. All coaches are AI characters with fictional
-            backgrounds — not licensed professionals.{" "}
+            Your conversations are <span className="font-medium text-foreground">encrypted at rest with AES-256</span>.
+            Even our team cannot read your chats, memories, or journal entries.
+            We track only anonymous, aggregate metrics (like coach popularity) — never linked to your identity.{" "}
+            <Link href="/privacy" className="text-ember hover:text-ember/80 font-medium underline underline-offset-2">
+              See our full privacy details
+            </Link>
+            {" · "}
             <a href="/disclaimer" className="text-ember hover:text-ember/80 font-medium underline underline-offset-2">
-              Read our full AI disclosure
+              AI disclosure
             </a>
           </p>
           <div className="flex gap-2">

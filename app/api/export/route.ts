@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { tryDecrypt } from "@/lib/crypto/encryption";
 
 async function getSupabase() {
   const cookieStore = await cookies();
@@ -101,15 +102,28 @@ export async function GET() {
         .eq("user_id", user.id),
     ]);
 
+    // Decrypt encrypted fields before export
+    const uid = user.id;
+    const decryptField = (row: Record<string, unknown>, field: string) => {
+      if (row.encrypted && typeof row[field] === "string") {
+        return { ...row, [field]: tryDecrypt(row[field] as string, uid) };
+      }
+      return row;
+    };
+
+    const messages = (messagesRes.data || []).map((m: Record<string, unknown>) => decryptField(m, "content"));
+    const memories = (memoriesRes.data || []).map((m: Record<string, unknown>) => decryptField(m, "fact"));
+    const journal = (journalRes.data || []).map((j: Record<string, unknown>) => decryptField(j, "content"));
+
     return Response.json({
       exportedAt: new Date().toISOString(),
       userId: user.id,
       email: user.email,
       conversations: conversationsRes.data || [],
-      messages: messagesRes.data || [],
-      memories: memoriesRes.data || [],
+      messages,
+      memories,
       goals: goalsRes.data || [],
-      journal: journalRes.data || [],
+      journal,
       moods: moodRes.data || [],
       touchpoints: touchpointsRes.data || [],
       bookmarks: bookmarksRes.data || [],
