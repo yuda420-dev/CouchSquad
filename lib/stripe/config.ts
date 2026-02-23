@@ -42,7 +42,7 @@ export const PLAN_LIMITS: Record<PlanTier, PlanLimits> = {
     priorityResponses: false,
   },
   pro: {
-    maxCoaches: 6,
+    maxCoaches: 5,
     maxMessagesPerDay: 100,
     voiceEnabled: true,
     touchpointsEnabled: true,
@@ -55,7 +55,7 @@ export const PLAN_LIMITS: Record<PlanTier, PlanLimits> = {
     priorityResponses: false,
   },
   elite: {
-    maxCoaches: 20,
+    maxCoaches: 12,
     maxMessagesPerDay: -1, // unlimited
     voiceEnabled: true,
     touchpointsEnabled: true,
@@ -77,7 +77,7 @@ export const PLANS: PlanConfig[] = [
     priceId: null,
     description: "Try CoachSquad with limited access",
     features: [
-      "2 AI coaches",
+      "2 AI coaches from 50+",
       "15 messages per day",
       "Basic goal tracking",
       "Journal & mood logging",
@@ -90,9 +90,9 @@ export const PLANS: PlanConfig[] = [
     tier: "pro",
     price: 14.99,
     priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || null,
-    description: "Full coaching experience for serious growth",
+    description: "Choose 5 coaches for serious growth",
     features: [
-      "6 AI coaches",
+      "Draft 5 coaches from 50+",
       "100 messages per day",
       "Voice coaching sessions",
       "Proactive touchpoints",
@@ -109,9 +109,9 @@ export const PLANS: PlanConfig[] = [
     tier: "elite",
     price: 29.99,
     priceId: process.env.NEXT_PUBLIC_STRIPE_ELITE_PRICE_ID || null,
-    description: "Unlimited access — your full coaching firm",
+    description: "Draft 12 coaches — your full coaching firm",
     features: [
-      "All 20 coaches",
+      "Draft 12 from 50+ coaches",
       "Unlimited messages",
       "Everything in Pro",
       "Coach Huddle (cross-coach coordination)",

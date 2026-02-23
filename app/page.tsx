@@ -727,7 +727,7 @@ export default function LandingPage() {
                   icon: Users,
                   num: "01",
                   title: "Draft Your Team",
-                  desc: "Choose up to 12 coaches from 20 experts across 11 domains — find the style that fits YOU.",
+                  desc: "Draft your squad from 50+ coaches across 22 domains — fitness, career, mental health, relationships, and more.",
                   accent: "#e8633b",
                   emoji: "🏆",
                 },
@@ -813,7 +813,7 @@ export default function LandingPage() {
               tuned to you.
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-6">
-              Six personality sliders let you shape each coach&apos;s vibe. Want your fitness coach
+              Twelve personality sliders let you shape each coach&apos;s vibe. Want your fitness coach
               to be more nurturing? Crank up warmth. Need your career coach to stop sugarcoating?
               Max out directness.
             </p>

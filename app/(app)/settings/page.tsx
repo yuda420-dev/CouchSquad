@@ -161,7 +161,7 @@ export default function SettingsPage() {
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {isFree
-                      ? "Free Starter plan — 2 coaches, 15 messages/day"
+                      ? "Free Starter plan — 2 coaches from 50+, 15 messages/day"
                       : `$${getPlanByTier(tier).price}/month — ${getPlanByTier(tier).description}`}
                   </p>
                   {subscription?.cancel_at_period_end && subscription.current_period_end && (

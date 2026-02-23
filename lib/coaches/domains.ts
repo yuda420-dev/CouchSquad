@@ -10,6 +10,17 @@ import {
   Crown,
   Palette,
   BookOpen,
+  Moon,
+  Timer,
+  Mic,
+  Sparkles,
+  GraduationCap,
+  Shirt,
+  Plane,
+  Music,
+  Shield,
+  HeartPulse,
+  PawPrint,
   type LucideIcon,
 } from "lucide-react";
 
@@ -33,6 +44,17 @@ export const DOMAINS: Domain[] = [
   { id: "leadership", label: "Leadership", icon: Crown, color: "bg-amber-500", description: "Leading people, teams, and yourself" },
   { id: "creativity", label: "Creativity", icon: Palette, color: "bg-indigo-500", description: "Writing, art, music, and creative expression" },
   { id: "philosophy", label: "Philosophy", icon: BookOpen, color: "bg-slate-500", description: "Big questions, meaning, and examined living" },
+  { id: "sleep", label: "Sleep & Recovery", icon: Moon, color: "bg-violet-500", description: "Better sleep, rest, and physical recovery" },
+  { id: "productivity", label: "Productivity", icon: Timer, color: "bg-cyan-500", description: "Time management, focus, and getting things done" },
+  { id: "communication", label: "Communication", icon: Mic, color: "bg-rose-500", description: "Public speaking, persuasion, and difficult conversations" },
+  { id: "spirituality", label: "Spirituality", icon: Sparkles, color: "bg-amber-400", description: "Purpose, meaning, faith, and inner life" },
+  { id: "education", label: "Education", icon: GraduationCap, color: "bg-sky-500", description: "Learning mastery, study skills, and knowledge" },
+  { id: "style", label: "Style & Image", icon: Shirt, color: "bg-fuchsia-500", description: "Personal style, grooming, and self-presentation" },
+  { id: "travel", label: "Travel & Adventure", icon: Plane, color: "bg-teal-500", description: "Exploration, adventure, and cultural immersion" },
+  { id: "music", label: "Music", icon: Music, color: "bg-red-400", description: "Practice, performance, songwriting, and musical growth" },
+  { id: "addiction", label: "Recovery & Habits", icon: Shield, color: "bg-stone-500", description: "Addiction recovery, behavior change, and healing" },
+  { id: "longevity", label: "Longevity", icon: HeartPulse, color: "bg-green-400", description: "Healthy aging, vitality, and longevity science" },
+  { id: "pets", label: "Pet Care", icon: PawPrint, color: "bg-yellow-500", description: "Dog training, pet wellness, and the human-animal bond" },
 ];
 
 export function getDomain(id: string): Domain | undefined {
