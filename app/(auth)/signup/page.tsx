@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Users, Loader2 } from "lucide-react";
+import { SocialAuthButtons } from "@/components/social-auth-buttons";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -52,6 +53,8 @@ export default function SignupPage() {
           <h1 className="text-2xl font-bold">Build your squad</h1>
           <p className="text-muted-foreground text-sm mt-1">Create an account to get started</p>
         </div>
+
+        <SocialAuthButtons />
 
         <form onSubmit={handleSignup} className="space-y-4">
           <div>

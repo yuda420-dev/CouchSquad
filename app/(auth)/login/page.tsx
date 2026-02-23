@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Users, Loader2 } from "lucide-react";
+import { SocialAuthButtons } from "@/components/social-auth-buttons";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -45,6 +46,8 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold">Welcome back</h1>
           <p className="text-muted-foreground text-sm mt-1">Sign in to access your coaching squad</p>
         </div>
+
+        <SocialAuthButtons />
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
