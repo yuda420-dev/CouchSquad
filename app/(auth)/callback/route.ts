@@ -3,9 +3,16 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/discover";
+
+  // Determine the correct origin for redirects
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const forwardedProto = request.headers.get("x-forwarded-proto") ?? "https";
+  const origin = forwardedHost
+    ? `${forwardedProto}://${forwardedHost}`
+    : new URL(request.url).origin;
 
   if (code) {
     const cookieStore = await cookies();
@@ -23,7 +30,7 @@ export async function GET(request: Request) {
                 cookieStore.set(name, value, options)
               );
             } catch {
-              // ignore
+              // ignore — setAll called from Server Component
             }
           },
         },
@@ -32,19 +39,24 @@ export async function GET(request: Request) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      // On Vercel, use x-forwarded-host to get the correct redirect URL
-      const forwardedHost = request.headers.get("x-forwarded-host");
-      const isLocalEnv = process.env.NODE_ENV === "development";
-
-      if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`);
-      } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
-      } else {
-        return NextResponse.redirect(`${origin}${next}`);
-      }
+      return NextResponse.redirect(`${origin}${next}`);
     }
+
+    // If exchange failed, redirect with error info
+    return NextResponse.redirect(
+      `${origin}/login?error=${encodeURIComponent(error.message)}`
+    );
   }
 
-  return NextResponse.redirect(`${origin}/login?error=Could+not+authenticate`);
+  // No code present — might be an error from the OAuth provider
+  const error = searchParams.get("error");
+  const errorDescription = searchParams.get("error_description");
+
+  if (error) {
+    return NextResponse.redirect(
+      `${origin}/login?error=${encodeURIComponent(errorDescription || error)}`
+    );
+  }
+
+  return NextResponse.redirect(`${origin}/login?error=No+authorization+code+received`);
 }
