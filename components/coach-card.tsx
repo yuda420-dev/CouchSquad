@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { type Coach } from "@/lib/supabase/types";
 import { getDomain } from "@/lib/coaches/domains";
 import { PERSONALITY_TRAITS } from "@/lib/coaches/personality";
@@ -49,6 +50,7 @@ function PersonalityBars({ traits }: { traits: Coach["default_personality"] }) {
 export function CoachCard({ coach, isOnRoster, onToggleRoster, rosterLoading, compact, index = 0 }: CoachCardProps) {
   const domain = getDomain(coach.domain);
   const availability = getCoachAvailability(coach.domain);
+  const [taglineExpanded, setTaglineExpanded] = useState(false);
 
   return (
     <motion.div
@@ -113,7 +115,11 @@ export function CoachCard({ coach, isOnRoster, onToggleRoster, rosterLoading, co
 
         {/* Tagline */}
         {coach.tagline && (
-          <p className="text-xs text-muted-foreground italic mb-1 line-clamp-2 leading-relaxed">
+          <p
+            className={`text-xs text-muted-foreground italic mb-1 leading-relaxed cursor-pointer transition-all ${taglineExpanded ? "" : "line-clamp-2"}`}
+            onClick={(e) => { e.preventDefault(); setTaglineExpanded(!taglineExpanded); }}
+            title={taglineExpanded ? "Click to collapse" : "Click to read full description"}
+          >
             &ldquo;{coach.tagline}&rdquo;
           </p>
         )}

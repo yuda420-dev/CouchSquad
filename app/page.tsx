@@ -262,7 +262,7 @@ function CoachDetailPanel({
             <h3 className="text-xs font-medium tracking-[0.15em] uppercase text-ember mb-2">
               Background
             </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {coach.backstory}
             </p>
           </div>
