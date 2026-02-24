@@ -290,6 +290,7 @@ export function ChatInterface({ coach, initialMessages = [], conversationId }: C
               <CoachAvatar
                 name={coach.name}
                 accentColor={accentColor}
+                avatarUrl={coach.avatar_url}
                 personality={coach.default_personality}
                 size={64}
                 className="mx-auto"
@@ -323,6 +324,7 @@ export function ChatInterface({ coach, initialMessages = [], conversationId }: C
                   <CoachAvatar
                     name={coach.name}
                     accentColor={accentColor}
+                    avatarUrl={coach.avatar_url}
                     personality={coach.default_personality}
                     size={32}
                   />

@@ -188,6 +188,7 @@ export function VoiceOverlay({
             <CoachAvatar
               name={coach.name}
               accentColor={color}
+              avatarUrl={coach.avatar_url}
               personality={coach.default_personality}
               size={120}
             />

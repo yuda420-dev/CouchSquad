@@ -175,7 +175,7 @@ export default function HomePage() {
 
       {/* Quick Stats Row */}
       {insights && (
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <Link href="/insights" className="rounded-xl border border-border/50 bg-card p-4 text-center hover:border-border transition-colors">
             <p className="text-2xl font-bold">{insights.stats.totalSessions}</p>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Sessions</p>

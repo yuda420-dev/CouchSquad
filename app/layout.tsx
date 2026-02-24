@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
@@ -15,10 +15,28 @@ const playfair = Playfair_Display({
   weight: ["400", "500", "600", "700", "800"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#e8633b",
+};
+
 export const metadata: Metadata = {
   title: "CoachSquad — Your Personal Team of AI Coaches",
   description:
-    "Build your dream coaching roster. 20 expert AI coaches across fitness, nutrition, career, relationships, mental health, and more. Personalized guidance with memory, personality, and voice.",
+    "Build your dream coaching roster. 50 expert AI coaches across fitness, nutrition, career, relationships, mental health, and more. Personalized guidance with memory, personality, and voice.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "CoachSquad",
+  },
+  icons: {
+    icon: "/icons/icon-192.svg",
+    apple: "/icons/icon-192.svg",
+  },
   openGraph: {
     title: "CoachSquad — Your Personal Team of AI Coaches",
     description:

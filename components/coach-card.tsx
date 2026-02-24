@@ -75,6 +75,7 @@ export function CoachCard({ coach, isOnRoster, onToggleRoster, rosterLoading, co
             <CoachAvatar
               name={coach.name}
               accentColor={coach.accent_color || "#e8633b"}
+              avatarUrl={coach.avatar_url}
               personality={coach.default_personality}
               size={48}
               className="transition-transform group-hover:scale-105"

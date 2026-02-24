@@ -90,6 +90,7 @@ export default function ChatPage({ params }: { params: Promise<{ id: string }> }
         <CoachAvatar
           name={coach.name}
           accentColor={accentColor}
+          avatarUrl={coach.avatar_url}
           personality={coach.default_personality}
           size={32}
         />

@@ -85,6 +85,7 @@ function PublicCoachCard({
           <CoachAvatar
             name={coach.name}
             accentColor={coach.accent_color || "#e8633b"}
+            avatarUrl={coach.avatar_url}
             personality={coach.default_personality}
             size={48}
           />
@@ -213,6 +214,7 @@ function CoachDetailPanel({
             <CoachAvatar
               name={coach.name}
               accentColor={coach.accent_color || "#e8633b"}
+              avatarUrl={coach.avatar_url}
               personality={coach.default_personality}
               size={72}
             />
@@ -549,6 +551,7 @@ export default function LandingPage() {
                 <CoachAvatar
                   name={coach.name}
                   accentColor={coach.accent_color || "#e8633b"}
+                  avatarUrl={coach.avatar_url}
                   personality={coach.default_personality}
                   size={40}
                 />
@@ -833,6 +836,7 @@ export default function LandingPage() {
               <CoachAvatar
                 name='Marcus "Iron" Chen'
                 accentColor="#DC2626"
+                avatarUrl="https://randomuser.me/api/portraits/men/45.jpg"
                 personality={{ humor: 40, directness: 85, warmth: 50, intensity: 80, socratic: 30, formality: 40 }}
                 size={44}
               />

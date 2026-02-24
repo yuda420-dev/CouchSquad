@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -25,6 +26,8 @@ import {
   Home,
   GitBranch,
   Shield,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/lib/stores/app-store";
@@ -50,7 +53,7 @@ const navItems = [
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
-export function NavSidebar() {
+function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const unreadCount = useAppStore((s) => s.unreadTouchpoints.length);
@@ -63,9 +66,9 @@ export function NavSidebar() {
   }
 
   return (
-    <aside className="w-64 h-screen sticky top-0 border-r border-border bg-sidebar/80 backdrop-blur-xl flex flex-col">
+    <>
       {/* Logo */}
-      <Link href="/home" className="flex items-center gap-3 px-5 py-5">
+      <Link href="/home" className="flex items-center gap-3 px-5 py-5" onClick={onNavigate}>
         <div className="w-9 h-9 rounded-xl bg-ember flex items-center justify-center shadow-lg shadow-ember/15">
           <Users className="w-5 h-5 text-white" />
         </div>
@@ -78,7 +81,7 @@ export function NavSidebar() {
       <div className="mx-4 h-px bg-gradient-to-r from-transparent via-border to-transparent mb-2" />
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 space-y-0.5 mt-2">
+      <nav className="flex-1 px-3 space-y-0.5 mt-2 overflow-y-auto">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");
@@ -86,8 +89,9 @@ export function NavSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative group",
+                "flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all relative group",
                 isActive
                   ? "bg-ember/[0.06] text-ember"
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -98,7 +102,7 @@ export function NavSidebar() {
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-ember" />
               )}
 
-              <item.icon className={cn("w-[18px] h-[18px]", isActive && "drop-shadow-[0_0_4px_rgba(232,99,59,0.4)]")} />
+              <item.icon className={cn("w-[18px] h-[18px] shrink-0", isActive && "drop-shadow-[0_0_4px_rgba(232,99,59,0.4)]")} />
               {item.label}
 
               {/* Inbox badge */}
@@ -124,6 +128,99 @@ export function NavSidebar() {
           Sign out
         </Button>
       </div>
+    </>
+  );
+}
+
+/** Desktop sidebar — hidden on mobile */
+export function NavSidebar() {
+  return (
+    <aside className="hidden md:flex w-64 h-screen sticky top-0 border-r border-border bg-sidebar/80 backdrop-blur-xl flex-col">
+      <SidebarContent />
     </aside>
+  );
+}
+
+/** Mobile top bar + slide-out drawer */
+export function MobileNav() {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Close drawer on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  // Find current page label
+  const current = navItems.find(
+    (item) => pathname === item.href || pathname.startsWith(item.href + "/")
+  );
+
+  return (
+    <>
+      {/* Mobile top bar */}
+      <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 border-b border-border bg-background/90 backdrop-blur-xl">
+        <button
+          onClick={() => setOpen(true)}
+          className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-secondary transition-colors"
+          aria-label="Open navigation"
+        >
+          <Menu className="w-5 h-5 text-foreground" />
+        </button>
+
+        <Link href="/home" className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-ember flex items-center justify-center shadow-md shadow-ember/15">
+            <Users className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-sm font-bold tracking-tight text-foreground">
+            Coach<span className="text-ember">Squad</span>
+          </span>
+        </Link>
+
+        {/* Current page indicator */}
+        <div className="w-10 h-10 flex items-center justify-center">
+          {current && <current.icon className="w-5 h-5 text-muted-foreground" />}
+        </div>
+      </header>
+
+      {/* Backdrop */}
+      {open && (
+        <div
+          className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* Slide-out drawer */}
+      <aside
+        className={cn(
+          "md:hidden fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-border flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          open ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        {/* Close button */}
+        <button
+          onClick={() => setOpen(false)}
+          className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
+          aria-label="Close navigation"
+        >
+          <X className="w-4 h-4 text-muted-foreground" />
+        </button>
+
+        <SidebarContent onNavigate={() => setOpen(false)} />
+      </aside>
+    </>
   );
 }

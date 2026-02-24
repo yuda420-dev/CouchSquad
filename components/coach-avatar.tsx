@@ -9,6 +9,7 @@
 interface CoachAvatarProps {
   name: string;
   accentColor: string;
+  avatarUrl?: string | null;
   personality?: {
     humor?: number;
     directness?: number;
@@ -59,7 +60,27 @@ function mixColors(hex1: string, hex2: string, t: number): string {
   return `rgb(${r},${g},${b})`;
 }
 
-export function CoachAvatar({ name, accentColor, personality, size = 48, className = "" }: CoachAvatarProps) {
+export function CoachAvatar({ name, accentColor, avatarUrl, personality, size = 48, className = "" }: CoachAvatarProps) {
+  // If we have a real photo, show it
+  if (avatarUrl) {
+    return (
+      <div
+        className={`relative shrink-0 ${className}`}
+        style={{ width: size, height: size }}
+      >
+        <img
+          src={avatarUrl}
+          alt={name}
+          width={size}
+          height={size}
+          className="rounded-xl object-cover w-full h-full"
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+
+  // Fallback: generative SVG avatar
   const p = personality || {};
   const warmth = (p.warmth ?? 50) / 100;
   const intensity = (p.intensity ?? 50) / 100;
@@ -243,7 +264,21 @@ export function CoachAvatar({ name, accentColor, personality, size = 48, classNa
 }
 
 /** Smaller badge-style avatar for inline use */
-export function CoachAvatarSmall({ name, accentColor, size = 32, className = "" }: { name: string; accentColor: string; size?: number; className?: string }) {
+export function CoachAvatarSmall({ name, accentColor, avatarUrl, size = 32, className = "" }: { name: string; accentColor: string; avatarUrl?: string | null; size?: number; className?: string }) {
+  if (avatarUrl) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={name}
+        width={size}
+        height={size}
+        className={`rounded-lg object-cover shrink-0 ${className}`}
+        style={{ width: size, height: size }}
+        loading="lazy"
+      />
+    );
+  }
+
   const initials = name
     .replace(/^(Dr\.|Prof\.|Colonel|Coach|Nana|"[^"]*"\s*)/i, "")
     .trim()

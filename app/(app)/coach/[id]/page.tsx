@@ -192,6 +192,7 @@ export default function CoachProfilePage({ params }: { params: Promise<{ id: str
         <CoachAvatar
           name={coach.name}
           accentColor={accentColor}
+          avatarUrl={coach.avatar_url}
           personality={coach.default_personality}
           size={80}
         />
