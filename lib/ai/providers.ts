@@ -1,8 +1,23 @@
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+// Lazy initialization — avoids build-time crash when env vars aren't set
+let _anthropic: Anthropic | null = null;
+let _openai: OpenAI | null = null;
+
+function getAnthropic(): Anthropic {
+  if (!_anthropic) {
+    _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+  }
+  return _anthropic;
+}
+
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  }
+  return _openai;
+}
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -26,7 +41,7 @@ async function streamAnthropic(
   systemPrompt: string,
   messages: ChatMessage[]
 ): Promise<ReadableStream<Uint8Array>> {
-  const stream = anthropic.messages.stream({
+  const stream = getAnthropic().messages.stream({
     model,
     max_tokens: 2048,
     system: systemPrompt,
@@ -65,7 +80,7 @@ async function streamOpenAI(
   systemPrompt: string,
   messages: ChatMessage[]
 ): Promise<ReadableStream<Uint8Array>> {
-  const stream = await openai.chat.completions.create({
+  const stream = await getOpenAI().chat.completions.create({
     model,
     stream: true,
     messages: [
